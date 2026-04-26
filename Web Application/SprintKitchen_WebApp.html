@@ -6,6 +6,8 @@
 <title>Sprint Kitchen — Web Application</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="emailjs-config.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -31,12 +33,30 @@ nav{position:sticky;top:0;z-index:300;background:rgba(10,10,10,.96);backdrop-fil
 .ntab:hover{color:var(--txt);background:var(--s2)}
 .ntab.on{color:var(--txt);background:var(--s3)}
 .nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
-.role-toggle{display:flex;gap:1px;background:var(--s2);border-radius:20px;padding:2px;border:1px solid var(--bd)}
-.rtab{background:none;border:none;color:var(--muted);font-size:11px;font-weight:500;padding:4px 10px;border-radius:16px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.15s}
-.rtab.on{background:var(--s4);color:var(--txt)}
 .cart-btn{background:var(--or);color:#fff;border:none;padding:6px 14px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.18s;white-space:nowrap}
 .cart-btn:hover{background:var(--or2)}
 .cbadge{background:rgba(255,255,255,.25);border-radius:10px;font-size:10px;padding:1px 5px;font-weight:700}
+
+/* USER CHIP */
+.user-chip{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--bd);border-radius:20px;padding:4px 4px 4px 10px}
+.uc-role{font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:.3px;text-transform:uppercase}
+.uc-name{font-size:12.5px;font-weight:500;color:var(--txt);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uc-logout{background:var(--s3);border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:4px 10px;border-radius:14px;cursor:pointer;transition:.15s}
+.uc-logout:hover{background:var(--red-bg);color:var(--red)}
+.btn-login{background:var(--or);color:#fff;border:none;padding:6px 16px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:.18s}
+.btn-login:hover{background:var(--or2)}
+
+/* AUTH OVERLAY */
+.auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:700;display:none;align-items:center;justify-content:center;padding:20px}
+.auth-overlay.open{display:flex}
+.auth-modal{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rl);width:100%;max-width:400px;padding:28px;animation:fadeIn .22s ease}
+.auth-brand{text-align:center;margin-bottom:22px}
+.auth-tabs{display:flex;background:var(--s2);border-radius:20px;padding:2px;margin-bottom:20px;border:1px solid var(--bd)}
+.auth-tab{flex:1;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:7px;border-radius:18px;cursor:pointer;transition:.15s}
+.auth-tab.on{background:var(--s4);color:var(--txt)}
+.auth-err{font-size:12px;color:var(--red);min-height:16px;margin-bottom:4px;text-align:center}
+.auth-note{font-size:11px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+.auth-note button{background:none;border:none;color:var(--or);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600}
 
 /* PAGES */
 .page{display:none;animation:fadeIn .26s ease}
@@ -72,7 +92,6 @@ nav{position:sticky;top:0;z-index:300;background:rgba(10,10,10,.96);backdrop-fil
 .card-body{padding:13px;flex:1;display:flex;flex-direction:column}
 .card-name{font-size:13.5px;font-weight:600;color:var(--txt);margin-bottom:3px}
 .card-desc{font-size:11.5px;color:var(--muted);line-height:1.55;flex:1;margin-bottom:8px}
-/* ── RATING STRIP ── */
 .rating-strip{display:flex;align-items:center;gap:5px;margin-bottom:9px;flex-wrap:wrap}
 .sd-star{font-size:10.5px;line-height:1}
 .rating-score{font-size:12px;font-weight:700;color:var(--gold)}
@@ -162,9 +181,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .info-card h3{font-size:13px;font-weight:600;margin-bottom:6px}
 .info-card p{font-size:12px;color:var(--muted);line-height:1.6}
 
-/* ═══════════════════════════════
-   ITEM DETAIL MODAL (with reviews)
-═══════════════════════════════ */
+/* ITEM DETAIL MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:600;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
 .overlay.open{display:flex}
 .modal{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rl);width:100%;max-width:540px;position:relative;animation:fadeIn .22s ease;margin:auto}
@@ -174,7 +191,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .modal-body{padding:20px}
 .modal-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream);margin-bottom:5px}
 .modal-desc{font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:14px}
-/* rating summary */
 .mrb{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:16px}
 .mrb-score{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:var(--gold);line-height:1;flex-shrink:0}
 .mrb-mid{flex-shrink:0}
@@ -187,7 +203,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .dist-track{flex:1;height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
 .dist-fill{height:100%;background:var(--gold);border-radius:3px;transition:.5s}
 .dist-n{font-size:9.5px;color:var(--muted);width:16px;text-align:right;flex-shrink:0}
-/* write review */
 .arc-wrap{margin-bottom:16px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:14px}
 .arc-title{font-size:12px;font-weight:600;color:var(--cream);margin-bottom:10px}
 .arc-stars{display:flex;gap:5px;margin-bottom:9px}
@@ -195,7 +210,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .arc-star.on{opacity:1}
 .arc-submit{background:var(--or);color:#fff;border:none;padding:7px 16px;border-radius:18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.18s;margin-top:2px}
 .arc-submit:hover{background:var(--or2)}
-/* reviews list */
 .rv-list-wrap{margin-top:2px}
 .rl-title{font-size:12px;font-weight:600;color:var(--cream);margin-bottom:9px}
 .rv-card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:11px;margin-bottom:8px}
@@ -235,7 +249,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .icon-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
 .add-form{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:18px;display:none}
 .add-form.open{display:block;animation:fadeIn .2s ease}
-/* staff reviews table */
 .rv-staff-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:10px}
 .rv-sc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:6px}
 .rv-sc-dish{font-size:12.5px;font-weight:600;color:var(--cream);display:flex;align-items:center;gap:6px}
@@ -245,7 +258,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .rv-sc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:7px}
 .rv-sc-time{font-size:10px;color:var(--s4)}
 
-/* toast / loader */
+/* TOAST / LOADER */
 .toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:10px 18px;border-radius:24px;font-size:12.5px;font-weight:600;z-index:9999;opacity:0;transform:translateY(6px);transition:.25s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.err{background:var(--red)}
@@ -262,11 +275,8 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   <div class="logo" onclick="nav('home')">Sprint <span>Kitchen</span></div>
   <div class="ntabs" id="navTabs"></div>
   <div class="nav-right">
-    <div class="role-toggle">
-      <button class="rtab on" onclick="setRole('customer',this)">Customer</button>
-      <button class="rtab" onclick="setRole('staff',this)">Staff</button>
-    </div>
-    <button class="cart-btn" id="cartBtn" onclick="nav('cart')">
+    <div id="userChip"></div>
+    <button class="cart-btn" id="cartBtn" onclick="nav('cart')" style="display:none">
       🛒 Cart <span class="cbadge" id="badge">0</span>
     </button>
   </div>
@@ -323,7 +333,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
     <div class="fsec"><h3>👤 Contact Info</h3>
       <div class="frow"><div><label>First Name</label><input id="fn" placeholder="Ahmad"></div><div><label>Last Name</label><input id="ln" placeholder="Khan"></div></div>
       <div class="frow full"><div><label>Phone</label><input id="ph" placeholder="+92 300 0000000" type="tel"></div></div>
-      <div class="frow full"><div><label>Email</label><input id="em" placeholder="you@email.com" type="email"></div></div>
+      <div class="frow full"><div><label>Email <span style="color:var(--or)">*</span> <span style="color:var(--muted);font-weight:400">(used to send your feedback link)</span></label><input id="em" placeholder="you@email.com" type="email"></div></div>
     </div>
     <div class="fsec"><h3>🛵 Delivery Method</h3>
       <div class="ot-grid">
@@ -360,6 +370,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
     <p style="color:var(--muted);font-size:13px;line-height:1.7">Your food is being prepared. We'll update you at each step.</p>
     <div style="font-size:11px;color:var(--muted);margin-top:16px">Order ID</div>
     <div class="suc-oid" id="sucOid">SK-000000</div>
+    <p id="sucEmailNote" style="font-size:12px;color:var(--muted);margin-bottom:16px"></p>
     <div class="tracker">
       <div class="tr-step"><div class="tr-dot">✓</div><div class="tr-lbl">Confirmed</div></div>
       <div class="tr-step"><div class="tr-dot">🍳</div><div class="tr-lbl">Preparing</div></div>
@@ -422,7 +433,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   </div>
 </div>
 
-<!-- ═══ STAFF PAGES ═══ -->
+<!-- STAFF PAGES -->
 <div class="page" id="pg-staff-dashboard">
   <div class="wrap">
     <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--cream);margin-bottom:20px">Dashboard</div>
@@ -476,7 +487,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   </div>
 </div>
 
-<!-- *** NEW: STAFF REVIEWS PAGE *** -->
 <div class="page" id="pg-staff-reviews">
   <div class="wrap">
     <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--cream);margin-bottom:8px">Dish Reviews</div>
@@ -494,7 +504,28 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   </div>
 </div>
 
-<!-- ITEM MODAL (with reviews) -->
+<!-- ADMIN: STAFF MANAGEMENT -->
+<div class="page" id="pg-admin-staff">
+  <div class="wrap">
+    <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--cream);margin-bottom:8px">Staff Management</div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Add or remove staff login accounts. Staff can access orders, menu, and reviews.</p>
+    <div class="add-form open" style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:13px">➕ Add New Staff Account</div>
+      <div class="frow tri">
+        <div><label>Full Name</label><input id="smName" placeholder="Staff Name"></div>
+        <div><label>Email</label><input id="smEmail" type="email" placeholder="staff@email.com"></div>
+        <div><label>Password</label><input id="smPass" type="password" placeholder="Min. 6 characters"></div>
+      </div>
+      <button class="btn-p" onclick="addStaffAccount()">Add Staff Member</button>
+    </div>
+    <div style="background:var(--s1);border:1px solid var(--bd);border-radius:var(--rl);padding:20px">
+      <div class="s-hdr"><h3>Staff Accounts</h3></div>
+      <div id="staffMgmtList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ITEM MODAL -->
 <div class="overlay" id="itemOverlay" onclick="overlayBg(event)">
   <div class="modal">
     <button class="modal-x" onclick="closeOverlay()">✕</button>
@@ -503,8 +534,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
       <div id="mPills" style="margin-bottom:6px"></div>
       <div class="modal-name" id="mName"></div>
       <div class="modal-desc" id="mDesc"></div>
-
-      <!-- Rating Summary -->
       <div class="mrb" id="mRatingBar">
         <div class="mrb-score" id="mAvgScore">—</div>
         <div class="mrb-mid">
@@ -513,8 +542,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
         </div>
         <div class="dist-bars" id="mDistBars"></div>
       </div>
-
-      <!-- Write Review -->
       <div class="arc-wrap">
         <div class="arc-title">✍️ Write a Review</div>
         <div class="arc-stars" id="arcStars">
@@ -531,8 +558,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
         <textarea id="arcText" placeholder="Share your experience with this dish..." rows="2" style="margin-bottom:8px;background:var(--s1)"></textarea>
         <button class="arc-submit" onclick="submitReview()">Post Review</button>
       </div>
-
-      <!-- Reviews List -->
       <div class="rv-list-wrap">
         <div class="rl-title" id="rlTitle">Customer Reviews</div>
         <div id="reviewsList"></div>
@@ -545,13 +570,90 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   </div>
 </div>
 
+<!-- AUTH OVERLAY -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-modal">
+    <div class="auth-brand">
+      <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--or)">Sprint <span style="color:var(--cream)">Kitchen</span></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Real food, real reviews.</div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab on" data-tab="login" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN PANE -->
+    <div id="authLoginPane">
+      <div style="margin-bottom:12px">
+        <label>Email Address</label>
+        <input id="loginEmail" type="email" placeholder="you@email.com" autocomplete="email">
+      </div>
+      <div style="margin-bottom:12px">
+        <label>Password</label>
+        <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="auth-err" id="authErr"></div>
+      <button class="big-btn" onclick="doLogin()" style="margin-top:4px">Sign In →</button>
+      <div class="auth-note">
+        New customer? <button onclick="switchAuthTab('register')">Create account</button>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:var(--s2);border-radius:var(--r);font-size:11px;color:var(--muted);line-height:1.7">
+        <strong style="color:var(--or)">Demo credentials</strong><br>
+        Admin: admin@sprintkitchen.pk / Sprint@Admin2025<br>
+        Staff: staff@sprintkitchen.pk / Staff@2025
+      </div>
+    </div>
+
+    <!-- REGISTER PANE -->
+    <div id="authRegPane" style="display:none">
+      <div style="margin-bottom:10px">
+        <label>Full Name</label>
+        <input id="regName" type="text" placeholder="Ahmad Khan" autocomplete="name">
+      </div>
+      <div style="margin-bottom:10px">
+        <label>Email Address</label>
+        <input id="regEmail" type="email" placeholder="you@email.com" autocomplete="email">
+      </div>
+      <div style="margin-bottom:10px">
+        <label>Password</label>
+        <input id="regPass" type="password" placeholder="Min. 6 characters" autocomplete="new-password">
+      </div>
+      <div style="margin-bottom:12px">
+        <label>Confirm Password</label>
+        <input id="regPass2" type="password" placeholder="Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
+      </div>
+      <div class="auth-err" id="regErr"></div>
+      <button class="big-btn" onclick="doRegister()" style="margin-top:4px">Create Account →</button>
+      <div class="auth-note">
+        Already have an account? <button onclick="switchAuthTab('login')">Sign in</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 /* ════════════════════════════════
+   EMAILJS CONFIG
+   Keys are loaded from emailjs-config.js (gitignored).
+   See emailjs-config.example.js for setup instructions.
+════════════════════════════════ */
+
+/* ════════════════════════════════
+   ADMIN CREDENTIALS (hardcoded, no registration)
+════════════════════════════════ */
+const ADMIN_EMAIL = 'admin@sprintkitchen.pk';
+const ADMIN_PASS  = 'Sprint@Admin2025';
+
+/* ════════════════════════════════
+   AUTH STATE
+════════════════════════════════ */
+let currentUser = null; // {role:'admin'|'staff'|'customer', email, name}
+
+/* ════════════════════════════════
    DATA
 ════════════════════════════════ */
-let role = 'customer';
 let currentPage = 'home';
 let activeCat = 'All';
 let orderType = 'delivery';
@@ -571,6 +673,11 @@ const STAFF_TABS = [
   {id:'staff-dashboard',label:'Dashboard'},{id:'staff-orders',label:'Orders'},
   {id:'staff-menu',label:'Menu Mgmt'},{id:'staff-reviews',label:'Dish Reviews'},
   {id:'staff-feedback',label:'Feedback'}
+];
+const ADMIN_TABS = [
+  {id:'staff-dashboard',label:'Dashboard'},{id:'staff-orders',label:'Orders'},
+  {id:'staff-menu',label:'Menu Mgmt'},{id:'staff-reviews',label:'Dish Reviews'},
+  {id:'staff-feedback',label:'Feedback'},{id:'admin-staff',label:'Staff Mgmt'}
 ];
 
 let MENU = [
@@ -627,10 +734,10 @@ let REVIEWS = {
 };
 
 let ORDERS = [
-  {id:'SK-384921',customer:'Ali Hassan',phone:'+92 300 1234567',items:[{name:'Chicken Burger',qty:2,price:450},{name:'French Fries',qty:1,price:250}],subtotal:1150,delivery:99,total:1249,type:'delivery',status:'preparing',time:'10 min ago',address:'House 12, Gulshan'},
-  {id:'SK-291047',customer:'Sara Khan',phone:'+92 321 9876543',items:[{name:'Beef Karahi',qty:1,price:1200},{name:'Mango Lassi',qty:2,price:220}],subtotal:1640,delivery:0,total:1640,type:'pickup',status:'ready',time:'25 min ago',address:'Pickup'},
-  {id:'SK-103852',customer:'Usman Malik',phone:'+92 333 4567890',items:[{name:'Margherita Pizza',qty:1,price:850}],subtotal:850,delivery:99,total:949,type:'delivery',status:'delivered',time:'1 hr ago',address:'Block 5, PECHS'},
-  {id:'SK-774430',customer:'Aisha Iqbal',phone:'+92 312 8765432',items:[{name:'Caesar Salad',qty:1,price:550},{name:'Cold Coffee',qty:1,price:280}],subtotal:830,delivery:99,total:929,type:'delivery',status:'pending',time:'2 min ago',address:'DHA Phase 6'},
+  {id:'SK-384921',customer:'Ali Hassan',email:'ali@example.com',phone:'+92 300 1234567',items:[{name:'Chicken Burger',qty:2,price:450},{name:'French Fries',qty:1,price:250}],subtotal:1150,delivery:99,total:1249,type:'delivery',status:'preparing',time:'10 min ago',address:'House 12, Gulshan'},
+  {id:'SK-291047',customer:'Sara Khan',email:'sara@example.com',phone:'+92 321 9876543',items:[{name:'Beef Karahi',qty:1,price:1200},{name:'Mango Lassi',qty:2,price:220}],subtotal:1640,delivery:0,total:1640,type:'pickup',status:'ready',time:'25 min ago',address:'Pickup'},
+  {id:'SK-103852',customer:'Usman Malik',email:'usman@example.com',phone:'+92 333 4567890',items:[{name:'Margherita Pizza',qty:1,price:850}],subtotal:850,delivery:99,total:949,type:'delivery',status:'delivered',time:'1 hr ago',address:'Block 5, PECHS'},
+  {id:'SK-774430',customer:'Aisha Iqbal',email:'aisha@example.com',phone:'+92 312 8765432',items:[{name:'Caesar Salad',qty:1,price:550},{name:'Cold Coffee',qty:1,price:280}],subtotal:830,delivery:99,total:929,type:'delivery',status:'pending',time:'2 min ago',address:'DHA Phase 6'},
 ];
 
 let FEEDBACK = [
@@ -643,6 +750,158 @@ let cart = {};
 let nextOrderId = 500000;
 
 /* ════════════════════════════════
+   LOCALSTORAGE HELPERS
+════════════════════════════════ */
+function getStaffAccounts() {
+  const raw = localStorage.getItem('sk_staff');
+  if (!raw) {
+    const defaults = [{name:'Staff User', email:'staff@sprintkitchen.pk', password:'Staff@2025', createdAt: new Date().toISOString()}];
+    localStorage.setItem('sk_staff', JSON.stringify(defaults));
+    return defaults;
+  }
+  return JSON.parse(raw);
+}
+function saveStaffAccounts(arr) { localStorage.setItem('sk_staff', JSON.stringify(arr)); }
+function getCustomers() { return JSON.parse(localStorage.getItem('sk_customers') || '[]'); }
+function saveCustomers(arr) { localStorage.setItem('sk_customers', JSON.stringify(arr)); }
+
+/* ════════════════════════════════
+   SESSION
+════════════════════════════════ */
+function loadSession() {
+  const raw = localStorage.getItem('sk_session');
+  if (raw) { try { currentUser = JSON.parse(raw); } catch(e) { currentUser = null; } }
+}
+function saveSession() {
+  if (currentUser) localStorage.setItem('sk_session', JSON.stringify(currentUser));
+  else localStorage.removeItem('sk_session');
+}
+
+/* ════════════════════════════════
+   AUTH MODAL
+════════════════════════════════ */
+function showAuthModal(tab) {
+  tab = tab || 'login';
+  document.getElementById('authOverlay').classList.add('open');
+  switchAuthTab(tab);
+  document.getElementById('authErr').textContent = '';
+  document.getElementById('regErr').textContent = '';
+}
+function hideAuthModal() {
+  document.getElementById('authOverlay').classList.remove('open');
+}
+function switchAuthTab(tab) {
+  document.getElementById('authLoginPane').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('authRegPane').style.display  = tab === 'register' ? 'block' : 'none';
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('on', t.dataset.tab === tab));
+}
+
+function doLogin() {
+  const email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
+  const pass  = document.getElementById('loginPass').value;
+  const err   = document.getElementById('authErr');
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Please fill in all fields.'; return; }
+
+  if (email === ADMIN_EMAIL.toLowerCase() && pass === ADMIN_PASS) {
+    currentUser = { role: 'admin', email: ADMIN_EMAIL, name: 'Admin' };
+    saveSession(); hideAuthModal(); onLogin(); return;
+  }
+
+  const staffList = getStaffAccounts();
+  const staffFound = staffList.find(s => s.email.toLowerCase() === email && s.password === pass);
+  if (staffFound) {
+    currentUser = { role: 'staff', email: staffFound.email, name: staffFound.name };
+    saveSession(); hideAuthModal(); onLogin(); return;
+  }
+
+  const custList = getCustomers();
+  const custFound = custList.find(c => c.email.toLowerCase() === email && c.password === pass);
+  if (custFound) {
+    currentUser = { role: 'customer', email: custFound.email, name: custFound.name };
+    saveSession(); hideAuthModal(); onLogin(); return;
+  }
+
+  err.textContent = 'Invalid email or password.';
+}
+
+function doRegister() {
+  const name  = (document.getElementById('regName').value || '').trim();
+  const email = (document.getElementById('regEmail').value || '').trim().toLowerCase();
+  const pass  = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPass2').value;
+  const err   = document.getElementById('regErr');
+  err.textContent = '';
+
+  if (!name || !email || !pass || !pass2) { err.textContent = 'Please fill in all fields.'; return; }
+  if (pass !== pass2) { err.textContent = 'Passwords do not match.'; return; }
+  if (pass.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
+
+  if (email === ADMIN_EMAIL.toLowerCase()) { err.textContent = 'Email already in use.'; return; }
+  const staffList = getStaffAccounts();
+  if (staffList.find(s => s.email.toLowerCase() === email)) { err.textContent = 'Email already in use.'; return; }
+  const custList = getCustomers();
+  if (custList.find(c => c.email === email)) { err.textContent = 'Email already registered. Please sign in.'; return; }
+
+  custList.push({ name, email, password: pass, createdAt: new Date().toISOString() });
+  saveCustomers(custList);
+  currentUser = { role: 'customer', email, name };
+  saveSession(); hideAuthModal(); onLogin();
+}
+
+function logout() {
+  currentUser = null;
+  saveSession();
+  cart = {};
+  updateBadge();
+  currentPage = 'home';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById('pg-home').classList.add('on');
+  renderUserChip();
+  buildNav();
+  showAuthModal('login');
+}
+
+function onLogin() {
+  renderUserChip();
+  buildNav();
+  updateHome();
+  renderMenu();
+  const startPage = (currentUser.role === 'customer') ? 'home' : 'staff-dashboard';
+  nav(startPage);
+
+  // Pre-fill checkout if logged in as customer
+  if (currentUser.role === 'customer') {
+    const custList = getCustomers();
+    const me = custList.find(c => c.email === currentUser.email);
+    if (me) {
+      document.getElementById('fn').value = me.name.split(' ')[0] || me.name;
+      document.getElementById('ln').value = me.name.split(' ').slice(1).join(' ') || '';
+      document.getElementById('em').value = me.email;
+      document.getElementById('fbNm').value = me.name;
+      document.getElementById('fbEm').value = me.email;
+    }
+  }
+}
+
+function renderUserChip() {
+  const chip    = document.getElementById('userChip');
+  const cartBtn = document.getElementById('cartBtn');
+  if (!currentUser) {
+    chip.innerHTML = `<button class="btn-login" onclick="showAuthModal('login')">Login / Register</button>`;
+    if (cartBtn) cartBtn.style.display = 'none';
+    return;
+  }
+  const roleColor = { admin: 'var(--red)', staff: 'var(--blue)', customer: 'var(--green)' }[currentUser.role];
+  chip.innerHTML = `<div class="user-chip">
+    <span class="uc-role" style="background:${roleColor}20;color:${roleColor}">${currentUser.role}</span>
+    <span class="uc-name">${currentUser.name}</span>
+    <button class="uc-logout" onclick="logout()">Logout</button>
+  </div>`;
+  if (cartBtn) cartBtn.style.display = currentUser.role === 'customer' ? 'flex' : 'none';
+}
+
+/* ════════════════════════════════
    RATING HELPERS
 ════════════════════════════════ */
 function getAvg(id) {
@@ -650,7 +909,8 @@ function getAvg(id) {
   if(!rs.length) return null;
   return rs.reduce((a,r)=>a+r.rating,0)/rs.length;
 }
-function starsHtml(score, sz=13) {
+function starsHtml(score, sz) {
+  sz = sz || 13;
   return [1,2,3,4,5].map(i=>`<span class="mrb-star" style="font-size:${sz}px;opacity:${i<=Math.round(score)?1:.18}">⭐</span>`).join('');
 }
 function inlineRatingHtml(id) {
@@ -668,14 +928,20 @@ function inlineRatingHtml(id) {
    NAV
 ════════════════════════════════ */
 function buildNav() {
-  const tabs = role==='customer' ? CUSTOMER_TABS : STAFF_TABS;
-  document.getElementById('navTabs').innerHTML = tabs.map(t=>
+  if (!currentUser) {
+    document.getElementById('navTabs').innerHTML = '';
+    return;
+  }
+  const tabSet = currentUser.role === 'customer' ? CUSTOMER_TABS
+    : currentUser.role === 'admin' ? ADMIN_TABS
+    : STAFF_TABS;
+  document.getElementById('navTabs').innerHTML = tabSet.map(t =>
     `<button class="ntab${currentPage===t.id?' on':''}" onclick="nav('${t.id}')">${t.label}</button>`
   ).join('');
-  document.getElementById('cartBtn').style.display = role==='customer'?'flex':'none';
 }
 
 function nav(id) {
+  if (!currentUser && id !== 'home') { showAuthModal('login'); return; }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.getElementById('pg-'+id)?.classList.add('on');
   currentPage = id;
@@ -689,13 +955,8 @@ function nav(id) {
   if(id==='staff-menu') renderMenuMgmt();
   if(id==='staff-reviews') renderStaffReviews();
   if(id==='staff-feedback') renderAllFeedback();
-}
-
-function setRole(r, btn) {
-  role = r;
-  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  nav(r==='customer'?'home':'staff-dashboard');
+  if(id==='admin-staff') renderStaffMgmt();
+  if(id==='feedback') prefillFeedbackFromHash();
 }
 
 /* ════════════════════════════════
@@ -765,9 +1026,13 @@ function openItem(id) {
   const ab = document.getElementById('mAddBtn');
   if(item.available){ab.textContent='Add to Cart';ab.disabled=false;ab.onclick=()=>{addCart(id);closeOverlay();};}
   else{ab.textContent='Unavailable';ab.disabled=true;}
-  // reset review form
   document.querySelectorAll('.arc-star').forEach(s=>s.classList.remove('on'));
   ['arcName','arcEmail','arcText'].forEach(i=>document.getElementById(i).value='');
+  // Pre-fill review name/email if logged in
+  if (currentUser && currentUser.role === 'customer') {
+    document.getElementById('arcName').value = currentUser.name;
+    document.getElementById('arcEmail').value = currentUser.email;
+  }
   renderModalRating(id);
   renderReviewsList(id);
   document.getElementById('itemOverlay').classList.add('open');
@@ -825,6 +1090,10 @@ function submitReview(){
   arcStarRating=0;
   document.querySelectorAll('.arc-star').forEach(s=>s.classList.remove('on'));
   ['arcName','arcEmail','arcText'].forEach(i=>document.getElementById(i).value='');
+  if (currentUser && currentUser.role === 'customer') {
+    document.getElementById('arcName').value = currentUser.name;
+    document.getElementById('arcEmail').value = currentUser.email;
+  }
   renderModalRating(currentItemId);
   renderReviewsList(currentItemId);
   renderMenu();updateHome();
@@ -837,7 +1106,10 @@ function overlayBg(e){if(e.target.id==='itemOverlay')closeOverlay();}
 /* ════════════════════════════════
    CART
 ════════════════════════════════ */
-function addCart(id){cart[id]=(cart[id]||0)+1;updateBadge();showToast('Added to cart!');}
+function addCart(id){
+  if (!currentUser || currentUser.role !== 'customer') { showToast('Please log in to add items.','err'); return; }
+  cart[id]=(cart[id]||0)+1;updateBadge();showToast('Added to cart!');
+}
 function updateBadge(){document.getElementById('badge').textContent=Object.values(cart).reduce((a,b)=>a+b,0);}
 function renderCart(){
   const el=document.getElementById('cartBody');
@@ -876,16 +1148,40 @@ function renderCoSummary(){
 }
 function fCard(el){let v=el.value.replace(/\D/g,'').substring(0,16);el.value=v.replace(/(.{4})/g,'$1 ').trim();}
 function fExp(el){let v=el.value.replace(/\D/g,'');if(v.length>2)v=v.substring(0,2)+'/'+v.substring(2,4);el.value=v;}
+
 function placeOrder(){
-  const fn=document.getElementById('fn').value.trim(),ph=document.getElementById('ph').value.trim();
+  const fn=document.getElementById('fn').value.trim();
+  const ph=document.getElementById('ph').value.trim();
+  const email=document.getElementById('em').value.trim();
   if(!fn||!ph){showToast('Please fill contact details.','err');return;}
   const btn=document.getElementById('placeBtn');btn.innerHTML='<span class="loader"></span> Processing...';btn.disabled=true;
   const sub=Object.keys(cart).filter(k=>cart[k]>0).reduce((a,k)=>a+MENU.find(i=>i.id==k).price*cart[k],0);
   const del=orderType==='delivery'?99:0;
   const oid='SK-'+String(++nextOrderId);
   const items=Object.keys(cart).filter(k=>cart[k]>0).map(k=>{const it=MENU.find(i=>i.id==k);return{name:it.name,qty:cart[k],price:it.price};});
-  ORDERS.unshift({id:oid,customer:fn+' '+(document.getElementById('ln').value||''),phone:ph,items,subtotal:sub,delivery:del,total:sub+del,type:orderType,status:'pending',time:'Just now',address:orderType==='delivery'?(document.getElementById('addr').value||'—'):'Pickup'});
-  setTimeout(()=>{btn.innerHTML='Place Order →';btn.disabled=false;cart={};updateBadge();ordersToday++;document.getElementById('sucOid').textContent=oid;nav('success');},1300);
+  ORDERS.unshift({
+    id:oid,
+    customer:fn+' '+(document.getElementById('ln').value||''),
+    email:email,
+    phone:ph,
+    items,
+    subtotal:sub,
+    delivery:del,
+    total:sub+del,
+    type:orderType,
+    status:'pending',
+    time:'Just now',
+    address:orderType==='delivery'?(document.getElementById('addr').value||'—'):'Pickup'
+  });
+  setTimeout(()=>{
+    btn.innerHTML='Place Order →';btn.disabled=false;
+    cart={};updateBadge();ordersToday++;
+    document.getElementById('sucOid').textContent=oid;
+    const noteEl=document.getElementById('sucEmailNote');
+    if(email) noteEl.textContent='📧 A feedback link will be emailed to '+email+' once your order is delivered.';
+    else noteEl.textContent='';
+    nav('success');
+  },1300);
 }
 
 /* ════════════════════════════════
@@ -899,6 +1195,26 @@ function submitFb(){
   const btn=document.getElementById('fbBtn');btn.innerHTML='<span class="loader"></span> Submitting...';btn.disabled=true;
   FEEDBACK.unshift({name:nm,rating:fbStarRating,comment:cm,orderId:document.getElementById('fbOid').value||'—',time:'Just now'});
   setTimeout(()=>{btn.innerHTML='Submit Feedback';btn.disabled=false;document.getElementById('fbForm').style.display='none';document.getElementById('fbDone').style.display='block';updateHome();},900);
+}
+
+function prefillFeedbackFromHash() {
+  // Triggered when navigating to feedback page
+  const hash = window.location.hash; // e.g. #feedback?order=SK-500001
+  if (hash && hash.includes('?')) {
+    const params = new URLSearchParams(hash.split('?')[1]);
+    const orderId = params.get('order');
+    if (orderId) document.getElementById('fbOid').value = orderId;
+  }
+  // Pre-fill name/email if logged in customer
+  if (currentUser && currentUser.role === 'customer') {
+    if (!document.getElementById('fbNm').value) document.getElementById('fbNm').value = currentUser.name;
+    if (!document.getElementById('fbEm').value) document.getElementById('fbEm').value = currentUser.email;
+  }
+  // Reset done state in case it was shown before
+  document.getElementById('fbForm').style.display='block';
+  document.getElementById('fbDone').style.display='none';
+  fbStarRating=0;
+  document.querySelectorAll('.istar').forEach(s=>s.classList.remove('on'));
 }
 
 /* ════════════════════════════════
@@ -916,7 +1232,6 @@ function renderDashboard(){
     <div class="dcard bl"><div class="dcard-val">${allRev.length}</div><div class="dcard-lbl">Total Reviews</div></div>
   `;
   document.getElementById('dashOrders').innerHTML=ordersTableHtml(ORDERS.slice(0,4));
-  // top rated
   const rated=MENU.map(m=>({...m,avg:getAvg(m.id)||0,count:(REVIEWS[m.id]||[]).length})).filter(m=>m.count>0).sort((a,b)=>b.avg-a.avg).slice(0,5);
   document.getElementById('dashTopRated').innerHTML=`<tr><th>Dish</th><th>Avg Rating</th><th>Reviews</th><th>Price</th></tr>`+
     rated.map(m=>`<tr><td>${m.emoji} <strong>${m.name}</strong></td><td style="color:var(--gold)">${m.avg.toFixed(1)} ${'⭐'.repeat(Math.round(m.avg))}</td><td style="color:var(--muted)">${m.count} reviews</td><td style="color:var(--or)">Rs.${m.price}</td></tr>`).join('');
@@ -927,7 +1242,7 @@ function ordersTableHtml(orders){
   return `<tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Type</th><th>Status</th><th>Action</th></tr>`+
   orders.map(o=>`<tr>
     <td style="color:var(--or);font-weight:700">${o.id}</td>
-    <td>${o.customer}</td>
+    <td>${o.customer}${o.email?`<br><span style="font-size:10px;color:var(--muted)">${o.email}</span>`:''}</td>
     <td style="color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.items.map(i=>`${i.name}×${i.qty}`).join(', ')}</td>
     <td style="font-weight:600">Rs.${o.total}</td>
     <td style="font-size:11px;color:var(--muted)">${o.type==='delivery'?'🛵':'🏪'}</td>
@@ -941,7 +1256,20 @@ function ordersTableHtml(orders){
     </select></td>
   </tr>`).join('');
 }
-function changeStatus(oid,st){const o=ORDERS.find(o=>o.id===oid);if(o){o.status=st;showToast(oid+' → '+st);renderDashboard();renderOrdersTable();}}
+
+function changeStatus(oid, st) {
+  const o = ORDERS.find(o => o.id === oid);
+  if (o) {
+    const prev = o.status;
+    o.status = st;
+    if (st === 'delivered' && prev !== 'delivered') {
+      triggerFeedbackEmail(o);
+    }
+    showToast(oid + ' → ' + st);
+    renderDashboard();
+    renderOrdersTable();
+  }
+}
 
 function renderOrdersTable(){
   const statFs=['All','pending','preparing','ready','delivered','cancelled'];
@@ -996,8 +1324,6 @@ function renderStaffReviews(){
   document.getElementById('reviewFilterBar').innerHTML=dishNames.map(n=>
     `<button class="fp${reviewFilter===n?' on':''}" onclick="setRF('${n}')">${n}</button>`
   ).join('');
-
-  // Collect all reviews with dish info
   let allRevs=[];
   MENU.forEach(m=>{
     (REVIEWS[m.id]||[]).forEach(r=>{
@@ -1005,8 +1331,7 @@ function renderStaffReviews(){
     });
   });
   if(reviewFilter!=='All') allRevs=allRevs.filter(r=>r.dishName===reviewFilter);
-  allRevs.sort((a,b)=>a.time.localeCompare(b.time)); // newest first
-
+  allRevs.sort((a,b)=>a.time.localeCompare(b.time));
   document.getElementById('staffReviewsList').innerHTML=allRevs.length
     ?allRevs.map(r=>`<div class="rv-staff-card">
         <div class="rv-sc-header">
@@ -1044,9 +1369,96 @@ function fbCard(f){return `<div style="background:var(--s2);border:1px solid var
 function renderAllFeedback(){document.getElementById('allFeedback').innerHTML=FEEDBACK.length?FEEDBACK.map(fbCard).join(''):`<div style="text-align:center;color:var(--muted);padding:40px">No feedback yet.</div>`;}
 
 /* ════════════════════════════════
+   ADMIN: STAFF MANAGEMENT
+════════════════════════════════ */
+function renderStaffMgmt() {
+  const list = getStaffAccounts();
+  if (!list.length) {
+    document.getElementById('staffMgmtList').innerHTML = `<div style="text-align:center;color:var(--muted);padding:32px">No staff accounts yet.</div>`;
+    return;
+  }
+  document.getElementById('staffMgmtList').innerHTML = `<table class="tbl">
+    <tr><th>Name</th><th>Email</th><th>Added</th><th>Action</th></tr>
+    ${list.map(s => `<tr>
+      <td><strong>${s.name}</strong></td>
+      <td style="color:var(--muted)">${s.email}</td>
+      <td style="color:var(--muted);font-size:11px">${new Date(s.createdAt).toLocaleDateString('en-PK',{year:'numeric',month:'short',day:'numeric'})}</td>
+      <td><button class="icon-btn danger" onclick="deleteStaffAccount('${s.email}')">Remove</button></td>
+    </tr>`).join('')}
+  </table>`;
+}
+
+function addStaffAccount() {
+  const name  = (document.getElementById('smName').value || '').trim();
+  const email = (document.getElementById('smEmail').value || '').trim().toLowerCase();
+  const pass  = (document.getElementById('smPass').value || '');
+  if (!name || !email || !pass) { showToast('Please fill all staff fields.', 'err'); return; }
+  if (pass.length < 6) { showToast('Password must be at least 6 characters.', 'err'); return; }
+  if (email === ADMIN_EMAIL.toLowerCase()) { showToast('That email is reserved.', 'err'); return; }
+  const list = getStaffAccounts();
+  if (list.find(s => s.email.toLowerCase() === email)) { showToast('Email already in use.', 'err'); return; }
+  list.push({ name, email, password: pass, createdAt: new Date().toISOString() });
+  saveStaffAccounts(list);
+  document.getElementById('smName').value  = '';
+  document.getElementById('smEmail').value = '';
+  document.getElementById('smPass').value  = '';
+  renderStaffMgmt();
+  showToast('Staff account created!');
+}
+
+function deleteStaffAccount(email) {
+  if (!confirm('Remove staff account for ' + email + '?')) return;
+  let list = getStaffAccounts();
+  list = list.filter(s => s.email.toLowerCase() !== email.toLowerCase());
+  saveStaffAccounts(list);
+  renderStaffMgmt();
+  showToast('Staff account removed.', 'err');
+}
+
+/* ════════════════════════════════
+   EMAILJS — FEEDBACK NOTIFICATION
+════════════════════════════════ */
+function ejsConfigured() {
+  return typeof EMAILJS_PUBLIC_KEY !== 'undefined'
+    && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'
+    && typeof EMAILJS_SERVICE_ID !== 'undefined'
+    && typeof EMAILJS_TEMPLATE_ID !== 'undefined';
+}
+
+function initEmailJS() {
+  if (typeof emailjs !== 'undefined' && ejsConfigured()) {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+}
+
+function triggerFeedbackEmail(order) {
+  if (!order.email) return;
+  const baseUrl = window.location.href.split('#')[0];
+  const feedbackLink = baseUrl + '#feedback?order=' + order.id;
+
+  if (typeof emailjs === 'undefined' || !ejsConfigured()) {
+    // EmailJS not configured — show simulated notification
+    showToast('📧 Feedback email sent to ' + order.email);
+    return;
+  }
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    to_email:      order.email,
+    customer_name: order.customer,
+    order_id:      order.id,
+    feedback_link: feedbackLink
+  }).then(() => {
+    showToast('📧 Feedback email sent to ' + order.email);
+  }).catch(() => {
+    showToast('Email could not be sent.', 'err');
+  });
+}
+
+/* ════════════════════════════════
    TOAST
 ════════════════════════════════ */
-function showToast(msg,type=''){
+function showToast(msg, type) {
+  type = type || '';
   const t=document.getElementById('toast');
   t.textContent=msg;t.className='toast'+(type?' '+type:'');
   requestAnimationFrame(()=>t.classList.add('show'));
@@ -1056,9 +1468,19 @@ function showToast(msg,type=''){
 /* ════════════════════════════════
    INIT
 ════════════════════════════════ */
+initEmailJS();
+loadSession();
+renderUserChip();
 buildNav();
 updateHome();
 renderMenu();
+
+if (!currentUser) {
+  showAuthModal('login');
+} else {
+  const startPage = currentUser.role === 'customer' ? 'home' : 'staff-dashboard';
+  nav(startPage);
+}
 </script>
 </body>
 </html>
