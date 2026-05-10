@@ -1,0 +1,9 @@
+# EmailJS credentials — never commit the real config file
+Web Application/emailjs-config.js
+
+# OS / editor artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+*.suo
+.vscode/settings.json
