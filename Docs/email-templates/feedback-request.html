@@ -1,0 +1,33 @@
+Subject: Your Sprint Kitchen order {{order_id}} has been delivered — share your feedback
+
+<!--
+  EmailJS template settings (Feedback Request):
+  - To Email:    {{to_email}}
+  - From Name:   Sprint Kitchen
+  - Reply To:    hello@sprintkitchen.pk  (optional)
+  - Copy the HTML below into the EmailJS template body (HTML mode).
+-->
+
+<p>Hi {{customer_name}},</p>
+
+<p>Great news — your Sprint Kitchen order <strong>{{order_id}}</strong> has been delivered.</p>
+
+<p><strong>Order summary</strong></p>
+<ul>
+  <li>Items: {{order_items}}</li>
+  <li>Total: {{order_total}}</li>
+</ul>
+
+<p>We would love to hear how everything was. It only takes a minute:</p>
+
+<p>
+  <a href="{{feedback_link}}" style="display:inline-block;background:#FF6B2B;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">
+    Leave Feedback
+  </a>
+</p>
+
+<p>Or copy this link into your browser:<br>{{feedback_link}}</p>
+
+<p>Thank you for ordering from Sprint Kitchen.</p>
+
+<p>— Sprint Kitchen Team</p>
