@@ -54,7 +54,7 @@ The app sends two emails:
    Your Sprint Kitchen order {{order_id}} has been delivered — share your feedback
    ```
 4. Switch to **HTML** mode and paste the body from:
-   `docs/email-templates/feedback-request.html`
+   `Docs/email-templates/feedback-request.html`
 5. Save and copy the **Template ID** (e.g. `template_xyz789`).
 
 ### Step 6: Create Template 2 — Feedback Confirmation
@@ -66,7 +66,7 @@ The app sends two emails:
    Thank you for your feedback — Sprint Kitchen ({{order_id}})
    ```
 4. Paste the body from:
-   `docs/email-templates/feedback-confirmation.html`
+   `Docs/email-templates/feedback-confirmation.html`
 5. Save and copy the **Template ID**.
 
 ---

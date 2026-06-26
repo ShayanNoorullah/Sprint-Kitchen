@@ -118,8 +118,8 @@ This repo includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) th
 | `EMAILJS_TEMPLATE_ID` | Feedback-request template ID |
 | `EMAILJS_CONFIRM_TEMPLATE_ID` | Feedback confirmation template ID |
 
-**Full step-by-step guide:** [docs/EMAILJS_PRODUCTION_SETUP.md](docs/EMAILJS_PRODUCTION_SETUP.md)  
-**Copy-paste email bodies:** [docs/email-templates/](docs/email-templates/)
+**Full step-by-step guide:** [Docs/EMAILJS_PRODUCTION_SETUP.md](Docs/EMAILJS_PRODUCTION_SETUP.md)  
+**Copy-paste email bodies:** [Docs/email-templates/](Docs/email-templates/)
 
 If secrets are not set, the deployed app still works — email sends are simulated with a toast notification.
 
@@ -148,7 +148,7 @@ npm run preview:deploy   # builds deploy/ bundle then serves it (matches product
 
 Email sending (feedback request on delivery, confirmation after feedback) requires an EmailJS account.
 
-> **Production (GitHub Pages):** Follow [docs/EMAILJS_PRODUCTION_SETUP.md](docs/EMAILJS_PRODUCTION_SETUP.md) for live email on the deployed site.
+> **Production (GitHub Pages):** Follow [Docs/EMAILJS_PRODUCTION_SETUP.md](Docs/EMAILJS_PRODUCTION_SETUP.md) for live email on the deployed site.
 
 ### Local setup
 
