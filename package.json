@@ -1,0 +1,11 @@
+{
+  "name": "sprint-kitchen",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sprint Kitchen — restaurant ordering web application",
+  "scripts": {
+    "prepare:deploy": "node scripts/prepare-deploy.mjs",
+    "preview": "npx --yes serve \"Web Application\" -p 3000",
+    "preview:deploy": "npm run prepare:deploy && npx --yes serve deploy -p 3000"
+  }
+}

@@ -13,14 +13,15 @@
 2. [Technology Stack](#technology-stack)
 3. [Project Structure](#project-structure)
 4. [Quick Start](#quick-start)
-5. [Configuration — EmailJS](#configuration--emailjs)
-6. [Demo Accounts](#demo-accounts)
-7. [Feature Guide](#feature-guide)
+5. [Deployment](#deployment)
+6. [Configuration — EmailJS](#configuration--emailjs)
+7. [Demo Accounts](#demo-accounts)
+8. [Feature Guide](#feature-guide)
    - [Customer Features](#customer-features)
    - [Staff Features](#staff-features)
    - [Admin Features](#admin-features)
-8. [Data Storage](#data-storage)
-9. [Known Limitations](#known-limitations)
+9. [Data Storage](#data-storage)
+10. [Known Limitations](#known-limitations)
 
 ---
 
@@ -55,16 +56,22 @@ All application logic runs in the browser. Data is held in-memory for the curren
 
 ```
 Sprint-Kitchen/
+├── .github/workflows/
+│   └── deploy.yml                     ← GitHub Pages CI/CD
 ├── Web Application/
 │   ├── SprintKitchen_WebApp.html      ← Main application (open this in a browser)
 │   ├── emailjs-config.js              ← Live API keys (gitignored — do not commit)
 │   └── emailjs-config.example.js     ← Setup template (safe to commit)
+├── scripts/
+│   ├── prepare-deploy.sh              ← Builds deploy/ bundle (CI / Unix)
+│   └── prepare-deploy.mjs             ← Builds deploy/ bundle (cross-platform)
 ├── Frontend/
 │   └── Sprint_kitchen_Frontend.html  ← Early UI prototype (reference only)
+├── netlify.toml                       ← Netlify config
+├── vercel.json                        ← Vercel config
+├── package.json                       ← Local preview scripts
 ├── .gitignore
-├── README.md                          ← This file
-├── CHANGE_REPORT.md                   ← Full change history
-└── SRS.md                             ← Software Requirements Specification
+└── README.md                          ← This file
 ```
 
 ---
@@ -77,6 +84,54 @@ Sprint-Kitchen/
 4. Log in using one of the [demo accounts](#demo-accounts) or register a new customer account.
 
 > For email notifications to work, complete the [EmailJS configuration](#configuration--emailjs) first.
+
+---
+
+## Deployment
+
+Sprint Kitchen is a **static site** (no backend, no build step). It can be hosted on any static file host.
+
+### Option A — GitHub Pages (recommended)
+
+This repo includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that deploys automatically on every push to `main`.
+
+**One-time setup (repo owner):**
+
+1. Open **GitHub → Settings → Pages**.
+2. Under **Build and deployment → Source**, select **GitHub Actions**.
+3. Push to `main` (or run the workflow manually under **Actions → Deploy to GitHub Pages → Run workflow**).
+
+**Live URL:** `https://<your-github-username>.github.io/Sprint-Kitchen/`
+
+**Optional — live EmailJS on production:** Add these repository secrets under **Settings → Secrets and variables → Actions**:
+
+| Secret | Description |
+|--------|-------------|
+| `EMAILJS_PUBLIC_KEY` | EmailJS public key |
+| `EMAILJS_SERVICE_ID` | EmailJS service ID |
+| `EMAILJS_TEMPLATE_ID` | Feedback-request template ID |
+| `EMAILJS_CONFIRM_TEMPLATE_ID` | Feedback confirmation template ID |
+
+If secrets are not set, the deployed app still works — email sends are simulated with a toast notification.
+
+### Option B — Netlify
+
+1. Sign in at [netlify.com](https://www.netlify.com) and **Import** this GitHub repository.
+2. Netlify reads `netlify.toml` automatically (`publish = deploy`, build runs `node scripts/prepare-deploy.mjs`).
+3. Add the same `EMAILJS_*` variables under **Site settings → Environment variables** (optional).
+
+### Option C — Vercel
+
+1. Import the repo at [vercel.com](https://vercel.com).
+2. Vercel uses `vercel.json` — output directory `deploy`, build command `node scripts/prepare-deploy.mjs`.
+3. Add `EMAILJS_*` environment variables in the project settings (optional).
+
+### Local preview (before deploying)
+
+```bash
+npm run preview          # serves Web Application/ on http://localhost:3000
+npm run preview:deploy   # builds deploy/ bundle then serves it (matches production layout)
+```
 
 ---
 

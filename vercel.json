@@ -1,0 +1,7 @@
+{
+  "buildCommand": "node scripts/prepare-deploy.mjs",
+  "outputDirectory": "deploy",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare deployment bundle
+        env:
+          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
+          EMAILJS_CONFIRM_TEMPLATE_ID: ${{ secrets.EMAILJS_CONFIRM_TEMPLATE_ID }}
+        run: |
+          mkdir -p deploy
+          cp "Web Application/SprintKitchen_WebApp.html" deploy/index.html
+
+          if [ -n "$EMAILJS_PUBLIC_KEY" ]; then
+            cat > deploy/emailjs-config.js << EOF
+          const EMAILJS_PUBLIC_KEY           = '${EMAILJS_PUBLIC_KEY}';
+          const EMAILJS_SERVICE_ID           = '${EMAILJS_SERVICE_ID}';
+          const EMAILJS_TEMPLATE_ID          = '${EMAILJS_TEMPLATE_ID}';
+          const EMAILJS_CONFIRM_TEMPLATE_ID  = '${EMAILJS_CONFIRM_TEMPLATE_ID}';
+          const ADMIN_EMAIL = 'admin@sprintkitchen.pk';
+          const ADMIN_PASS  = 'Sprint@Admin2025';
+          const Staff_EMAIL = 'staff@sprintkitchen.pk';
+          const Staff_PASS = 'Staff@2025';
+          const Customer_EMAIL = 'customer@sprintkitchen.pk';
+          const Customer_PASS = 'Customer@2025';
+          EOF
+          else
+            cp "Web Application/emailjs-config.example.js" deploy/emailjs-config.js
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: deploy
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

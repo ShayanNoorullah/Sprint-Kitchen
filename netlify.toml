@@ -1,0 +1,11 @@
+# Netlify deployment — connect repo at https://app.netlify.com
+# Optional: add EMAILJS_* environment variables in Site settings → Environment variables
+
+[build]
+  command = "node scripts/prepare-deploy.mjs"
+  publish = "deploy"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
