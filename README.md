@@ -5,6 +5,10 @@
 **Team:** Sprint Innovators  
 **Members:** Shayan (22K-4148) · Muhammad Umer (22K-4160) · Ibrahim (22K-4173) · M Saad Yousuf (22K-4572)
 
+**Live demo:** [shayannoorullah.github.io/Sprint-Kitchen](https://shayannoorullah.github.io/Sprint-Kitchen/)
+
+![Sprint Kitchen — landing page screenshot](assets/Sprint_Kitchen.png)
+
 ---
 
 ## Table of Contents
@@ -56,6 +60,8 @@ All application logic runs in the browser. Data is held in-memory for the curren
 
 ```
 Sprint-Kitchen/
+├── assets/
+│   └── Sprint_Kitchen.png             ← README screenshot
 ├── .github/workflows/
 │   └── deploy.yml                     ← GitHub Pages CI/CD
 ├── Web Application/
