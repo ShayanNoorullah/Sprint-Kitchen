@@ -32,6 +32,11 @@ jobs:
           cp "Web Application/SprintKitchen_WebApp.html" deploy/index.html
 
           if [ -n "$EMAILJS_PUBLIC_KEY" ]; then
+            if [ -z "$EMAILJS_SERVICE_ID" ] || [ -z "$EMAILJS_TEMPLATE_ID" ] || [ -z "$EMAILJS_CONFIRM_TEMPLATE_ID" ]; then
+              echo "::error::All four EmailJS secrets must be set: EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_CONFIRM_TEMPLATE_ID"
+              exit 1
+            fi
+            echo "EmailJS secrets detected — live email enabled on production."
             cat > deploy/emailjs-config.js << EOF
           const EMAILJS_PUBLIC_KEY           = '${EMAILJS_PUBLIC_KEY}';
           const EMAILJS_SERVICE_ID           = '${EMAILJS_SERVICE_ID}';
@@ -45,6 +50,7 @@ jobs:
           const Customer_PASS = 'Customer@2025';
           EOF
           else
+            echo "EmailJS secrets not set — deployment will use simulated email toasts."
             cp "Web Application/emailjs-config.example.js" deploy/emailjs-config.js
           fi
 

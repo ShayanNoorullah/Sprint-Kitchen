@@ -36,6 +36,12 @@
  *      {{order_id}}       — e.g. SK-500001
  *      {{rating}}         — e.g. 5/5
  *      {{comment}}        — the feedback comment the customer wrote
+ *
+ *  PRODUCTION (GitHub Pages):
+ *    1. EmailJS dashboard → Account → Security → Allowed Origins:
+ *       https://shayannoorullah.github.io
+ *    2. Add the four EMAILJS_* values as GitHub Actions secrets (see docs/EMAILJS_PRODUCTION_SETUP.md)
+ *    3. Re-run the "Deploy to GitHub Pages" workflow
  */
 
 const EMAILJS_PUBLIC_KEY           = 'YOUR_PUBLIC_KEY';
